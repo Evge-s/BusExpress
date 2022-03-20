@@ -1,0 +1,93 @@
+﻿@page "/register"
+@using System.ComponentModel.DataAnnotations
+@using BusExpress.Shared.Models.Accounts
+@inject IAuthenticationService AuthenticationService
+@inject NavigationManager NavigationManager
+@inject IUserService UserService
+
+<div class="col-md-6 offset-md-3 mt-5">
+    <div class="card">
+        <h4 class="card-header">Registration new user</h4>
+        <div class="card-body">
+            <EditForm Model="@model" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <div class="form-group">
+                    <label>User name</label>
+                    <InputText @bind-Value="model.Title" class="form-control" />
+                    <ValidationMessage For="@(() => model.Title)" />
+                </div>
+                <br />
+                <div class="form-group">
+                    <label>FirstName</label>
+                    <InputText @bind-Value="model.FirstName" class="form-control" />
+                    <ValidationMessage For="@(() => model.FirstName)" />
+                </div>
+                <br />
+                <div class="form-group">
+                    <label>LastName</label>
+                    <InputText @bind-Value="model.LastName" class="form-control" />
+                    <ValidationMessage For="@(() => model.LastName)" />
+                </div>
+                <br />
+                <div class="form-group">
+                    <label>Email</label>
+                    <InputText @bind-Value="model.Email" class="form-control" />
+                    <ValidationMessage For="@(() => model.Email)" />
+                </div>
+                <br />
+                <div class="form-group">
+                    <label>Password</label>
+                    <InputText @bind-Value="model.Password" type="password" class="form-control" />
+                    <ValidationMessage For="@(() => model.Password)" />
+                </div>
+                <br />
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <InputText @bind-Value="model.ConfirmPassword" type="password" class="form-control" />
+                    <ValidationMessage For="@(() => model.Password)" />
+                </div>
+                <br />
+                <div class="form-group">
+                    <label>Accept Terms</label>
+                    <InputCheckbox @bind-Value="model.AcceptTerms" type="checkbox" class="form-control" />
+                    <ValidationMessage For="@(() => model.AcceptTerms)" />
+                </div>
+                <br />
+                <button type="submit" class="btn btn-primary">
+                    @if (loading)
+                    {
+                        <span class="spinner-border spinner-border-sm mr-1"></span>
+                    }
+                    Sing in
+                </button>
+                @if (!string.IsNullOrEmpty(error))
+                {
+                    <div class="alert alert-danger mt-3 mb-0">@error</div>
+                }
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    private RegisterRequest model = new RegisterRequest();
+    private bool loading;
+    private string? error;
+
+    async Task HandleValidSubmit()
+    {
+        loading = true;
+        try
+        {
+            await AuthenticationService.Register(model);
+            var returnUrl = NavigationManager.QueryString("returnUrl") ?? "/";
+            NavigationManager.NavigateTo(returnUrl);
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+            loading = false;
+            StateHasChanged();
+        }
+    }
+}
