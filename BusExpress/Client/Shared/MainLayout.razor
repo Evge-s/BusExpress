@@ -7,9 +7,24 @@
     <div class="sidebar">
         <NavMenu />
     </div>
-
     <main>
-        <LoginLogoutButton />
+
+        <!-- nav -->
+        <nav class="navbar navbar-expand navbar-dark bg-dark">
+            <div class="navbar-nav">
+                @if (AuthenticationService.User != null)
+                {
+                    <NavLink href="" Match="NavLinkMatch.All" class="nav-item nav-link">Home</NavLink>
+                    <NavLink href="logout" class="nav-item nav-link">Logout</NavLink>
+                }
+                else
+                {
+                    <NavLink href="login" class="nav-item nav-link">Login</NavLink>
+                    <NavLink href="register" class="nav-item nav-link">Register</NavLink>
+                }
+            </div>
+        </nav>
+
         <article class="content px-4">
             @Body
         </article>
