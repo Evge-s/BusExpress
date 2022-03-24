@@ -12,14 +12,13 @@ using BusExpress.Server.Authorization;
 using BusExpress.Shared.Entities;
 using BusExpress.Server.Helpers;
 using BusExpress.Shared.Models.Accounts;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 public interface IAccountService
 {
     Task<AuthenticateResponse> Authenticate(AuthenticateRequest model, string ipAddress);
     Task<AuthenticateResponse> RefreshToken(string token, string ipAddress);
-    void RevokeToken(string token, string ipAddress);
+    Task RevokeToken(string token, string ipAddress);
     Task<AuthenticateResponse> Register(RegisterRequest model, string origin);
     Task VerifyEmail(string token);
     void ForgotPassword(ForgotPasswordRequest model, string origin);
@@ -86,7 +85,7 @@ public class AccountService : IAccountService
 
     public async Task<AuthenticateResponse> RefreshToken(string token, string ipAddress)
     {
-        var account = getAccountByRefreshToken(token);
+        var account = await getAccountByRefreshToken(token);
         var refreshToken = account.RefreshTokens.Single(x => x.Token == token);
 
         if (refreshToken.IsRevoked)
@@ -122,9 +121,9 @@ public class AccountService : IAccountService
         return response;
     }
 
-    public void RevokeToken(string token, string ipAddress)
+    public async Task RevokeToken(string token, string ipAddress)
     {
-        var account = getAccountByRefreshToken(token);
+        var account = await getAccountByRefreshToken(token);
         var refreshToken = account.RefreshTokens.Single(x => x.Token == token);
 
         if (!refreshToken.IsActive)
@@ -294,9 +293,9 @@ public class AccountService : IAccountService
         return account;
     }
 
-    private Account getAccountByRefreshToken(string token)
+    private async Task<Account> getAccountByRefreshToken(string token)
     {
-        var account = _context.Accounts.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
+        var account = await _context.Accounts.SingleOrDefaultAsync(u => u.RefreshTokens.Any(t => t.Token == token));
         if (account == null) throw new AppException("Invalid token");
         return account;
     }
