@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
-@inject IAuthenticationService AuthenticationService
 @inject NavigationManager NavigationManager
+@inject IAuthenticationService AuthenticationService
+@using BusExpress.Client.Pages.Auth
 
 <div class="page">
     <div class="sidebar">
@@ -8,35 +9,9 @@
     </div>
 
     <main>
-        @if (AuthenticationService.User == null)
-        {
-            <button @onclick="Logout" class="btn btn-danger">Logout</button>
-        }
-        else
-        {
-            <button @onclick="Login" class="btn btn-primary">Login</button>
-            <button @onclick="Register" class="btn btn-primary">Register</button>
-        }
-
+        <LoginLogoutButton />
         <article class="content px-4">
             @Body
         </article>
     </main>
 </div>
-
-@code {
-    void Login()
-    {
-        NavigationManager.NavigateTo("login");
-    }
-
-    void Register()
-    {
-        NavigationManager.NavigateTo("register");
-    }
-
-    void Logout()
-    {
-        NavigationManager.NavigateTo("Logout");
-    }
-}

@@ -7,6 +7,8 @@ public class DataContext : DbContext
 {
     public DbSet<Account> Accounts { get; set; }
 
+    public DbSet<Order> Orders { get; set; }
+
     public DataContext(DbContextOptions<DataContext> options) : base(options)
     {
 

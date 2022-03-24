@@ -28,6 +28,5 @@ namespace BusExpress.Client.Services
         {
             return await _httpService.Get<WeatherForecast[]>("/WeatherForecast");
         }
-
     }
 }

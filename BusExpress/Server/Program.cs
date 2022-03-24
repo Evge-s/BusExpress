@@ -17,17 +17,17 @@ var env = builder.Environment;
 services.AddControllersWithViews();
 services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BusExpressDatabase")));
-//services.AddCors();
 builder.Services.AddRazorPages();
 services.AddControllers().AddJsonOptions(x =>
+//services.AddCors();
 {
     // serialize enums as strings in api responses (e.g. Role)
     x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-#region swagger and auth
 services.AddSwaggerGen();
+
+#region auth
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -99,7 +99,6 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 
 app.MapRazorPages();
 app.MapControllers();

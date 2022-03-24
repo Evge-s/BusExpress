@@ -7,8 +7,8 @@ namespace BusExpress.Client.Services
     {
         AuthenticateResponse User { get; }
         Task Initialize();
-        Task Register(RegisterRequest request);
         Task Login(AuthenticateRequest request);
+        Task Register(RegisterRequest request);
         Task Logout();
     }
 
@@ -36,15 +36,16 @@ namespace BusExpress.Client.Services
             User = await _localStorageService.GetItem<AuthenticateResponse>("user");
         }
 
-        public async Task Register(RegisterRequest request)
-        {
-            User = await _httpService.Post<AuthenticateResponse>("/accounts/register", request);
-            await _localStorageService.SetItem("user", User);
-        }
-
         public async Task Login(AuthenticateRequest request)
         {
             User = await _httpService.Post<AuthenticateResponse>("/accounts/authenticate", request);
+            await _localStorageService.SetItem("user", User);
+        }
+
+        // temporary 
+        public async Task Register(RegisterRequest request)
+        {
+            User = await _httpService.Post<AuthenticateResponse>("/accounts/register", request);
             await _localStorageService.SetItem("user", User);
         }
 
@@ -52,7 +53,7 @@ namespace BusExpress.Client.Services
         {
             User = null;
             await _localStorageService.RemoveItem("user");
-            _navigationManager.NavigateTo("/");
+            _navigationManager.NavigateTo("login");
         }
     }
 }
